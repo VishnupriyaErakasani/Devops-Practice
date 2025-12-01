@@ -1,36 +1,35 @@
-pipeline{
+pipeline {
     agent any
-    tools{maven 'M3.9'}
-    stages{
-        stage('checkout'){
-            steps{checkout scm}
+    tools { maven 'M3.9' }
 
+    stages {
+        stage('Checkout') {
+            steps { checkout scm }
         }
-        stage('Build & Test'){
-            steps{
-                echo 'mvn clean package'
+
+        stage('Build & Test') {
+            steps {
+                bat 'mvn clean package'
             }
         }
-        stage('Archive'){
-            steps{
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-                junit '**/target/surefire-reports/TEST-*.xml'
+
+        stage('Archive') {
+            steps {
+                junit 'target/surefire-reports/*.xml'
+                archiveArtifacts 'target/*.jar'
             }
         }
-        stage('Parallel run'){
-            Parallel{
-                stage('Controller'){
-                    steps{
-                        echo'Controller:$env.NODE_NAME}'
-                    }
-                stage('Agent'){
-                    steps{
-                        bat {'echo Agent:%NODE_NAME%'}
-                    }
+
+        stage('Parallel Run') {
+            parallel {
+                stage('Controller') {
+                    steps { echo "Controller: ${env.NODE_NAME}" }
+                }
+                stage('Agent') {
+                    steps { bat "echo Agent: %NODE_NAME%" }
                 }
             }
-            }
         }
-        }
-        }
+    }
+}
     
