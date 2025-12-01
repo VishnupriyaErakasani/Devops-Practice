@@ -21,11 +21,11 @@ pipeline{
             Parallel{
                 stage('Controller'){
                     steps{
-                        echo'controller:$env.NODE_NAME}'
+                        echo'Controller:$env.NODE_NAME}'
                     }
                 stage('Agent'){
                     steps{
-                        bat 'echo agent:%NODE_NAME%'
+                        bat {'echo Agent:%NODE_NAME%'}
                     }
                 }
             }
